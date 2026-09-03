@@ -1,4 +1,5 @@
-# 1Fi SDE Intern Assignment
+# 1Fi SDE Intern 
+
 
 A full-stack web application that displays products with multiple EMI plans backed by mutual funds, built with React, Express.js, and MongoDB.
 
