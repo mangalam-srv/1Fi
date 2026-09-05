@@ -27,7 +27,7 @@ const createEMIPlans = (basePrice) => {
     },
     {
       tenure: 24,
-      monthlyAmount: Math.round(basePrice / 24 * 1.05),
+      monthlyAmount: Math.round(basePrice / 24),
       interestRate: 0,
       cashback: 3000,
     },

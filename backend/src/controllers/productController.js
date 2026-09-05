@@ -9,7 +9,6 @@ export const getProducts = async (req, res) => {
       data: products,
     });
   } catch (error) {
-    console.error('Error fetching products:', error);
     res.status(500).json({
       success: false,
       message: 'Server error while fetching products',
@@ -34,7 +33,6 @@ export const getProductBySlug = async (req, res) => {
       data: product,
     });
   } catch (error) {
-    console.error('Error fetching product:', error);
     res.status(500).json({
       success: false,
       message: 'Server error while fetching product',
@@ -62,7 +60,6 @@ export const getProductById = async (req, res) => {
       data: product,
     });
   } catch (error) {
-    console.error('Error fetching product:', error);
     res.status(500).json({
       success: false,
       message: 'Server error while fetching product',

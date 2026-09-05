@@ -24,7 +24,6 @@ export default function ProductDetail() {
     fetchProduct();
   }, [slug]);
 
-  // Reset EMI plan selection when variant changes
   useEffect(() => {
     if (product && product.variants?.[selectedVariantIndex]?.emiPlans?.length > 0) {
       setSelectedEmiPlanIndex(0);
@@ -67,28 +66,28 @@ export default function ProductDetail() {
 
   const handleConfirm = () => {
     setShowConfirmation(false);
-    navigate('/confirmation', {
-      state: {
-        product: {
-          name: product.name,
-          brand: product.brand,
-          slug: product.slug,
-        },
-        variant: {
-          name: selectedVariant.name,
-          storage: selectedVariant.storage,
-          color: selectedVariant.color,
-          price: selectedVariant.price,
-          image: selectedVariant.image,
-        },
-        emiPlan: selectedEmiPlan,
+    const confirmationData = {
+      product: {
+        name: product.name,
+        brand: product.brand,
+        slug: product.slug,
       },
-    });
+      variant: {
+        name: selectedVariant.name,
+        storage: selectedVariant.storage,
+        color: selectedVariant.color,
+        price: selectedVariant.price,
+        image: selectedVariant.image,
+      },
+      emiPlan: selectedEmiPlan,
+    };
+    sessionStorage.setItem('1fi_confirmation', JSON.stringify(confirmationData));
+    navigate('/confirmation', { state: confirmationData });
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-[#f8f7fb]">
         <ProductDetailSkeleton />
       </div>
     );
@@ -96,16 +95,16 @@ export default function ProductDetail() {
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="max-w-md mx-auto px-4 text-center">
+      <div className="min-h-screen bg-[#f8f7fb] flex items-center justify-center px-4">
+        <div className="max-w-md w-full text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-red-100 text-red-600 mb-4">
             <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Product Not Found</h2>
-          <p className="text-gray-600 mb-6">{error || 'The product you are looking for does not exist.'}</p>
-          <button onClick={() => navigate('/shop/marketplace')} className="px-6 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-colors">
+          <h2 className="text-xl font-semibold text-[#201d2b] mb-2">Product Not Found</h2>
+          <p className="text-[#645d6d] mb-6">{error || 'The product you are looking for does not exist.'}</p>
+          <button onClick={() => navigate('/shop')} className="px-6 py-3 bg-[#6d28d9] text-white font-medium rounded-xl hover:bg-[#5b21c7] transition-colors">
             Back to Marketplace
           </button>
         </div>
@@ -114,15 +113,15 @@ export default function ProductDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8" aria-label="Breadcrumb">
-          <button onClick={() => navigate('/shop/marketplace')} className="hover:text-gray-700 transition-colors">Marketplace</button>
+    <div className="min-h-screen bg-[#f8f7fb]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <nav className="flex items-center gap-2 text-sm text-[#9b94a6] mb-6 sm:mb-8" aria-label="Breadcrumb">
+          <button onClick={() => navigate('/shop')} className="hover:text-[#6d28d9] transition-colors">Shop</button>
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-          <span className="text-gray-900 font-medium truncate max-w-xs">{product.brand} {product.name}</span>
+          <span className="text-[#201d2b] font-medium truncate max-w-xs">{product.brand} {product.name}</span>
         </nav>
 
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
           <ProductImageGallery
             images={product.variants?.map(v => v.image).filter(Boolean) || []}
             selectedIndex={selectedVariantIndex}
@@ -142,11 +141,9 @@ export default function ProductDetail() {
         </div>
 
         {product.description && (
-          <div className="mt-12">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">About this Product</h2>
-            <div className="prose prose-gray max-w-none">
-              <p className="text-gray-600 leading-relaxed">{product.description}</p>
-            </div>
+          <div className="mt-8 lg:mt-12">
+            <h2 className="text-lg font-semibold text-[#201d2b] mb-3">About this Product</h2>
+            <p className="text-[#645d6d] leading-relaxed">{product.description}</p>
           </div>
         )}
       </div>
@@ -168,27 +165,28 @@ function ProductImageGallery({ images, selectedIndex, onChange }) {
 
   return (
     <div className="lg:sticky lg:top-24">
-      <div className="aspect-square max-h-[34rem] rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 mb-4">
+      <div className="aspect-square max-h-[34rem] rounded-2xl overflow-hidden bg-[#faf9fc] border border-[#eeeaf4] mb-4">
         <img
           src={currentImage}
           alt="Product"
-          className="w-full h-full object-contain"
+          className="w-full h-full object-contain p-4"
+          onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop&q=80'; }}
         />
       </div>
       {images.length > 1 && (
-        <div className="flex gap-3 overflow-x-auto pb-2" role="list" aria-label="Product images">
+        <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2" role="list" aria-label="Product images">
           {images.map((image, index) => (
             <button
               key={index}
               onClick={() => onChange(index)}
-              className={`flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
-                index === selectedIndex ? 'border-primary-500' : 'border-transparent hover:border-gray-300'
+              className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all ${
+                index === selectedIndex ? 'border-[#6d28d9]' : 'border-transparent hover:border-[#eeeaf4]'
               }`}
               role="listitem"
               aria-label={`View image ${index + 1}`}
               aria-selected={index === selectedIndex}
             >
-              <img src={image} alt="" className="w-full h-full object-cover" />
+              <img src={image} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=200&auto=format&fit=crop&q=80'; }} />
             </button>
           ))}
         </div>
@@ -209,8 +207,8 @@ function ProductInfo({
 }) {
   return (
     <div>
-      <p className="text-sm text-primary-600 font-medium mb-1">{product.brand}</p>
-      <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">{product.name}</h1>
+      <p className="text-sm text-[#6d28d9] font-medium mb-1">{product.brand}</p>
+      <h1 className="text-2xl sm:text-3xl font-extrabold text-[#201d2b] mb-4">{product.name}</h1>
 
       <VariantSelector
         variants={product.variants}
@@ -218,19 +216,14 @@ function ProductInfo({
         onChange={onVariantChange}
       />
 
-      <div className="mt-6 pt-6 border-t border-gray-100">
-        <div className="flex items-baseline gap-4 mb-4">
-          <span className="text-3xl font-bold text-gray-900">₹{selectedVariant?.price?.toLocaleString() || 0}</span>
-          <span className="text-sm text-gray-500 line-through">MRP ₹{Math.round((selectedVariant?.price || 0) * 1.1).toLocaleString()}</span>
-          <span className="ml-auto text-sm text-green-600 font-medium bg-green-50 px-3 py-1 rounded-full">
-            Save ₹{Math.round((selectedVariant?.price || 0) * 0.1).toLocaleString()}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3 text-sm text-gray-600">
-          <span className="px-3 py-1 bg-gray-100 rounded-full font-medium">In Stock</span>
-          <span className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full font-medium">Free Delivery</span>
-          <span className="px-3 py-1 bg-gray-100 rounded-full font-medium">7 Day Return</span>
+      <div className="mt-6 pt-6 border-t border-[#eeeaf4]">
+        <div className="flex items-baseline gap-3 mb-4">
+          <span className="text-2xl sm:text-3xl font-extrabold text-[#201d2b]">₹{selectedVariant?.price?.toLocaleString() || 0}</span>
+          <div className="flex items-center gap-2 ml-auto">
+            <span className="px-2.5 py-1 bg-[#f0fdf4] text-[#166534] rounded-full text-xs font-semibold">In Stock</span>
+            <span className="px-2.5 py-1 bg-[#eee7ff] text-[#6d28d9] rounded-full text-xs font-semibold">Free Delivery</span>
+            <span className="px-2.5 py-1 bg-[#faf9fc] text-[#9b94a6] rounded-full text-xs font-semibold">7 Day Return</span>
+          </div>
         </div>
       </div>
 
@@ -241,7 +234,7 @@ function ProductInfo({
         variantPrice={selectedVariant?.price}
       />
 
-      <div className="mt-6 pt-6 border-t border-gray-100">
+      <div className="mt-6 pt-6 border-t border-[#eeeaf4]">
         <ProceedButton
           onClick={onProceed}
           disabled={selectedEmiPlanIndex === null}
@@ -249,7 +242,7 @@ function ProductInfo({
         />
       </div>
 
-      <div className="mt-6 grid grid-cols-3 gap-4 text-center">
+      <div className="mt-6 grid grid-cols-3 gap-3 sm:gap-4 text-center">
         <FeatureBadge icon="shield" label="Secure" desc="Payment" />
         <FeatureBadge icon="truck" label="Free" desc="Delivery" />
         <FeatureBadge icon="rotate" label="Easy" desc="Returns" />
@@ -262,16 +255,16 @@ function EMISection({ emiPlans, selectedIndex, onChange, variantPrice }) {
   if (!emiPlans.length) {
     return (
       <div className="mt-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">EMI Plans</h2>
-        <p className="text-gray-600">No EMI plans available for this variant.</p>
+        <h2 className="text-lg font-semibold text-[#201d2b] mb-4">EMI Plans</h2>
+        <p className="text-[#645d6d]">No EMI plans available for this variant.</p>
       </div>
     );
   }
 
   return (
     <section className="mt-6" aria-labelledby="emi-heading">
-      <h2 id="emi-heading" className="text-lg font-semibold text-gray-900 mb-4">EMI Plans</h2>
-      <p className="text-sm text-gray-600 mb-4">
+      <h2 id="emi-heading" className="text-lg font-semibold text-[#201d2b] mb-3">EMI Plans</h2>
+      <p className="text-sm text-[#645d6d] mb-4">
         Select a plan that fits your budget. All plans are backed by mutual funds.
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="radiogroup" aria-label="EMI plans">
@@ -298,8 +291,8 @@ function SelectedPlanSummary({ plan, variantPrice }) {
   const interestAmount = totalAmount - variantPrice;
 
   return (
-    <div className="mt-4 p-4 bg-primary-50 rounded-xl border border-primary-100">
-      <h3 className="font-semibold text-primary-800 mb-3 flex items-center gap-2">
+    <div className="mt-4 p-4 bg-[#f5f1ff] rounded-xl border border-[#eee7ff]">
+      <h3 className="font-semibold text-[#6d28d9] mb-3 flex items-center gap-2">
         <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
         </svg>
@@ -307,29 +300,29 @@ function SelectedPlanSummary({ plan, variantPrice }) {
       </h3>
       <div className="grid grid-cols-2 gap-3 text-sm">
         <div>
-          <p className="text-primary-700 font-medium">Monthly Payment</p>
-          <p className="text-primary-900 font-bold text-lg">₹{plan.monthlyAmount.toLocaleString()}</p>
+          <p className="text-[#6d28d9] font-medium">Monthly Payment</p>
+          <p className="text-[#6d28d9] font-bold text-lg">₹{plan.monthlyAmount.toLocaleString()}</p>
         </div>
         <div>
-          <p className="text-primary-700 font-medium">Tenure</p>
-          <p className="text-primary-900 font-bold">{plan.tenure} months</p>
+          <p className="text-[#6d28d9] font-medium">Tenure</p>
+          <p className="text-[#6d28d9] font-bold">{plan.tenure} months</p>
         </div>
         <div>
-          <p className="text-primary-700 font-medium">Interest Rate</p>
-          <p className="text-primary-900 font-bold">{plan.interestRate}%</p>
+          <p className="text-[#6d28d9] font-medium">Interest Rate</p>
+          <p className="text-[#6d28d9] font-bold">{plan.interestRate}%</p>
         </div>
         <div>
-          <p className="text-primary-700 font-medium">Cashback</p>
-          <p className="text-primary-900 font-bold">₹{plan.cashback.toLocaleString()}</p>
+          <p className="text-[#6d28d9] font-medium">Cashback</p>
+          <p className="text-[#6d28d9] font-bold text-green-600">₹{plan.cashback.toLocaleString()}</p>
         </div>
         <div className="col-span-2">
-          <p className="text-primary-700 font-medium">Total Payable</p>
-          <p className="text-primary-900 font-bold text-lg">₹{totalAmount.toLocaleString()}</p>
+          <p className="text-[#6d28d9] font-medium">Total Payable</p>
+          <p className="text-[#6d28d9] font-bold text-lg">₹{totalAmount.toLocaleString()}</p>
         </div>
         {interestAmount > 0 && (
           <div className="col-span-2">
-            <p className="text-primary-700 font-medium">Interest Amount</p>
-            <p className="text-primary-900 font-bold">₹{interestAmount.toLocaleString()}</p>
+            <p className="text-[#6d28d9] font-medium">Interest Amount</p>
+            <p className="text-[#6d28d9] font-bold">₹{interestAmount.toLocaleString()}</p>
           </div>
         )}
       </div>
@@ -357,32 +350,32 @@ function FeatureBadge({ icon, label, desc }) {
   };
 
   return (
-    <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
-      <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-primary-100 text-primary-600 mb-2">
+    <div className="p-3 sm:p-4 bg-[#faf9fc] rounded-xl border border-[#eeeaf4]">
+      <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-[#eee7ff] text-[#6d28d9] mb-2">
         {icons[icon]}
       </div>
-      <p className="font-medium text-gray-900">{label}</p>
-      <p className="text-xs text-gray-500">{desc}</p>
+      <p className="font-medium text-[#201d2b] text-sm">{label}</p>
+      <p className="text-xs text-[#9b94a6]">{desc}</p>
     </div>
   );
 }
 
 function ProductDetailSkeleton() {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
-        <div className="aspect-square rounded-2xl bg-gray-100 animate-pulse" />
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
+        <div className="aspect-square rounded-2xl bg-[#eeeaf4] animate-pulse" />
         <div className="space-y-6">
-          <div className="h-4 w-32 bg-gray-100 rounded animate-pulse" />
-          <div className="h-8 w-3/4 bg-gray-100 rounded animate-pulse" />
-          <div className="h-10 w-48 bg-gray-100 rounded animate-pulse" />
+          <div className="h-4 w-32 bg-[#eeeaf4] rounded animate-pulse" />
+          <div className="h-8 w-3/4 bg-[#eeeaf4] rounded animate-pulse" />
+          <div className="h-10 w-48 bg-[#eeeaf4] rounded animate-pulse" />
           <div className="grid grid-cols-3 gap-3">
-            <div className="h-24 bg-gray-100 rounded animate-pulse" />
-            <div className="h-24 bg-gray-100 rounded animate-pulse" />
-            <div className="h-24 bg-gray-100 rounded animate-pulse" />
+            <div className="h-24 bg-[#eeeaf4] rounded animate-pulse" />
+            <div className="h-24 bg-[#eeeaf4] rounded animate-pulse" />
+            <div className="h-24 bg-[#eeeaf4] rounded animate-pulse" />
           </div>
-          <div className="h-32 bg-gray-100 rounded animate-pulse" />
-          <div className="h-12 w-full bg-gray-100 rounded animate-pulse" />
+          <div className="h-32 bg-[#eeeaf4] rounded animate-pulse" />
+          <div className="h-12 w-full bg-[#eeeaf4] rounded animate-pulse" />
         </div>
       </div>
     </div>

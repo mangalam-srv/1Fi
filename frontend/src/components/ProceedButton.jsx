@@ -3,10 +3,10 @@ export default function ProceedButton({ onClick, disabled, emiPlan }) {
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`w-full py-4 px-6 rounded-xl font-semibold text-lg transition-all ${
+      className={`w-full py-3.5 px-6 rounded-full font-semibold text-base transition-all ${
         disabled
-          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-          : 'bg-primary-600 text-white hover:bg-primary-700 shadow-soft hover:shadow-md active:scale-[0.98]'
+          ? 'bg-[#eeeaf4] text-[#9b94a6] cursor-not-allowed'
+          : 'bg-[#6d28d9] text-white hover:bg-[#5b21c7] shadow-card hover:shadow-soft active:scale-[0.98]'
       }`}
       aria-disabled={disabled}
     >
